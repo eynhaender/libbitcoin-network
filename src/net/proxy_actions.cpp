@@ -201,6 +201,29 @@ void proxy::do_http_write(const http::response_ptr& response,
             shared_from_this(), _1, _2, handler));
 }
 
+// SSE (HTTP streaming only).
+// ----------------------------------------------------------------------------
+
+void proxy::sse_start(const socket::sse_state::ptr& state,
+    count_handler&& handler) NOEXCEPT
+{
+    do_writing();
+    socket_->sse_start(state, std::move(handler));
+}
+
+void proxy::sse_write(const socket::sse_state::ptr& state,
+    std::string&& event, count_handler&& handler) NOEXCEPT
+{
+    do_writing();
+    socket_->sse_write(state, std::move(event), std::move(handler));
+}
+
+void proxy::sse_close(const socket::sse_state::ptr& state,
+    count_handler&& handler) NOEXCEPT
+{
+    socket_->sse_close(state, std::move(handler));
+}
+
 BC_POP_WARNING()
 BC_POP_WARNING()
 BC_POP_WARNING()

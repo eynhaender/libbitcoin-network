@@ -297,6 +297,33 @@ std::string channel_http::log_message(const response& response) const NOEXCEPT
         "{" + std::string(response[field::content_type]) + "}";
 }
 
+// SSE (HTTP streaming only).
+// ----------------------------------------------------------------------------
+
+void channel_http::sse_start(const socket::sse_state::ptr& state,
+    count_handler&& handler) NOEXCEPT
+{
+    BC_ASSERT(stranded());
+    BC_ASSERT(!websocket());
+    proxy::sse_start(state, std::move(handler));
+}
+
+void channel_http::sse_write(const socket::sse_state::ptr& state,
+    std::string&& event, count_handler&& handler) NOEXCEPT
+{
+    BC_ASSERT(stranded());
+    BC_ASSERT(!websocket());
+    proxy::sse_write(state, std::move(event), std::move(handler));
+}
+
+void channel_http::sse_close(const socket::sse_state::ptr& state,
+    count_handler&& handler) NOEXCEPT
+{
+    BC_ASSERT(stranded());
+    BC_ASSERT(!websocket());
+    proxy::sse_close(state, std::move(handler));
+}
+
 BC_POP_WARNING()
 BC_POP_WARNING()
 BC_POP_WARNING()

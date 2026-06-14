@@ -61,6 +61,11 @@ protected:
     /// Dispatch subscription method.
     DECLARE_SUBSCRIBE_CHANNEL()
 
+    /// SSE streaming — HTTP only (!websocket, requires strand).
+    DECLARE_SSE_START()
+    DECLARE_SSE_WRITE()
+    DECLARE_SSE_CLOSE()
+
     /// Message handlers by http method.
     virtual void handle_receive_get(const code& ec,
         const http::method::get::cptr& get) NOEXCEPT;

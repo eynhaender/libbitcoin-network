@@ -171,6 +171,9 @@ protected:
     /// The current thread is on the channel strand.
     virtual bool stranded() const NOEXCEPT;
 
+    /// The channel strand (for constructing timers on the strand).
+    asio::strand& strand() NOEXCEPT;
+
     /// The opposite endpoint of the channel.
     virtual config::endpoint opposite() const NOEXCEPT;
 
@@ -233,6 +236,27 @@ private:
     subscribe_broadcast<CLASS, message>(&CLASS::method, __VA_ARGS__)
 #define BROADCAST(message, ptr) broadcast<message>(ptr)
 #define UNSUBSCRIBE_BROADCAST() unsubscribe_broadcast<CLASS>()
+
+// SSE convenience macros (HTTP streaming, requires DECLARE_SSE_* in class).
+#define DECLARE_SSE_START() \
+    void sse_start(const socket::sse_state::ptr& state, \
+        count_handler&& handler) NOEXCEPT \
+    { channel_->sse_start(state, std::move(handler)); }
+#define DECLARE_SSE_WRITE() \
+    void sse_write(const socket::sse_state::ptr& state, std::string&& event, \
+        count_handler&& handler) NOEXCEPT \
+    { channel_->sse_write(state, std::move(event), std::move(handler)); }
+#define DECLARE_SSE_CLOSE() \
+    void sse_close(const socket::sse_state::ptr& state, \
+        count_handler&& handler) NOEXCEPT \
+    { channel_->sse_close(state, std::move(handler)); }
+
+#define SSE_START(state, method, ...) \
+    sse_start(state, BIND(method, __VA_ARGS__))
+#define SSE_WRITE(state, event, method, ...) \
+    sse_write(state, event, BIND(method, __VA_ARGS__))
+#define SSE_CLOSE(state, method, ...) \
+    sse_close(state, BIND(method, __VA_ARGS__))
 
 } // namespace network
 } // namespace libbitcoin

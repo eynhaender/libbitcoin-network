@@ -158,6 +158,18 @@ void proxy::do_reading() NOEXCEPT
         std::bind(&proxy::reading, shared_from_this()));
 }
 
+// protected
+void proxy::writing() NOEXCEPT
+{
+}
+
+// private
+void proxy::do_writing() NOEXCEPT
+{
+    boost::asio::dispatch(strand(),
+        std::bind(&proxy::writing, shared_from_this()));
+}
+
 // Properties.
 // ----------------------------------------------------------------------------
 

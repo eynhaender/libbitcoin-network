@@ -62,6 +62,8 @@ public:
     {
     }
 
+    using sse_state = socket::sse_state;
+
     /// Serialize and write http message to client (requires strand).
     /// Completion handler is always invoked on the channel strand.
     void send(http::response&& response,
@@ -70,6 +72,14 @@ public:
     /// Send without restarting the listener.
     void notify(http::response&& notification,
         result_handler&& handler) NOEXCEPT;
+
+    /// SSE streaming — HTTP only (!websocket, requires strand).
+    void sse_start(const socket::sse_state::ptr& state,
+        count_handler&& handler) NOEXCEPT;
+    void sse_write(const socket::sse_state::ptr& state, std::string&& event,
+        count_handler&& handler) NOEXCEPT;
+    void sse_close(const socket::sse_state::ptr& state,
+        count_handler&& handler) NOEXCEPT;
 
     /// Resume reading from the socket (requires strand).
     void resume() NOEXCEPT override;

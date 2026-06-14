@@ -129,6 +129,11 @@ bool protocol::stranded() const NOEXCEPT
     return channel_->stranded();
 }
 
+asio::strand& protocol::strand() NOEXCEPT
+{
+    return channel_->strand();
+}
+
 config::endpoint protocol::opposite() const NOEXCEPT
 {
     BC_PUSH_WARNING(NO_THROW_IN_NOEXCEPT)

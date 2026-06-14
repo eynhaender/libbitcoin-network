@@ -206,6 +206,28 @@ public:
     /// connection (outgoing only) this is the value passed via construct.
     virtual const config::endpoint& endpoint() const NOEXCEPT;
 
+    /// SSE (Server-Sent Events) streaming — HTTP only (!websocket).
+    struct sse_state
+    {
+        using ptr = std::shared_ptr<sse_state>;
+        using body_t       = boost::beast::http::buffer_body;
+        using response_t   = boost::beast::http::response<body_t>;
+        using serializer_t = boost::beast::http::response_serializer<body_t>;
+
+        response_t   response;
+        serializer_t serializer;
+        std::string  pending;
+
+        explicit sse_state(unsigned version) NOEXCEPT;
+    };
+
+    void sse_start(const sse_state::ptr& state,
+        count_handler&& handler) NOEXCEPT;
+    void sse_write(const sse_state::ptr& state, std::string&& event,
+        count_handler&& handler) NOEXCEPT;
+    void sse_close(const sse_state::ptr& state,
+        count_handler&& handler) NOEXCEPT;
+
 protected:
     using ws_t = std::variant<ref<ws::socket>, ref<ws::ssl::socket>>;
     using tcp_t = std::variant<ref<asio::socket>, ref<asio::ssl::socket>>;

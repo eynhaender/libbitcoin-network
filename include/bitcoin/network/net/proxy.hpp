@@ -115,7 +115,8 @@ protected:
     /// Stranded event, allows timer reset.
     virtual void reading() NOEXCEPT;
 
-    /// Stranded handler invoked from stop().
+    /// Stranded event, allows timer reset on writes.
+    virtual void writing() NOEXCEPT;
     virtual void stopping(const code& ec) NOEXCEPT;
 
     /// Subscribe to stop notification (requires strand).
@@ -182,6 +183,15 @@ protected:
     virtual void write(http::response&& response,
         count_handler&& handler) NOEXCEPT;
 
+    /// SSE (HTTP streaming only, requires strand, !websocket).
+    /// -----------------------------------------------------------------------
+    virtual void sse_start(const socket::sse_state::ptr& state,
+        count_handler&& handler) NOEXCEPT;
+    virtual void sse_write(const socket::sse_state::ptr& state,
+        std::string&& event, count_handler&& handler) NOEXCEPT;
+    virtual void sse_close(const socket::sse_state::ptr& state,
+        count_handler&& handler) NOEXCEPT;
+
 private:
     typedef std::function<void()> writer;
     typedef std::deque<writer> queue;
@@ -208,6 +218,9 @@ private:
 
     // Invoke reading() on strand.
     void do_reading() NOEXCEPT;
+
+    // Invoke writing() on strand.
+    void do_writing() NOEXCEPT;
 
     // These are thread safe.
     std::atomic_bool paused_{ true };

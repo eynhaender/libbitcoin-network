@@ -123,6 +123,13 @@ void channel::reading() NOEXCEPT
     start_inactivity();
 }
 
+// protected
+void channel::writing() NOEXCEPT
+{
+    BC_ASSERT(stranded());
+    start_inactivity();
+}
+
 size_t channel::remaining() const NOEXCEPT
 {
     BC_ASSERT(stranded());

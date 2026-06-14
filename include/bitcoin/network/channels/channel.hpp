@@ -103,6 +103,9 @@ protected:
     /// Stranded notifier, allows timer reset.
     void reading() NOEXCEPT override;
 
+    /// Stranded notifier, allows timer reset on writes.
+    void writing() NOEXCEPT override;
+
 private:
     void stop_expiration() NOEXCEPT;
     void start_expiration() NOEXCEPT;

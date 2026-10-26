@@ -112,6 +112,22 @@ BOOST_AUTO_TEST_CASE(asio__half_closed__peer_shutdown_with_unread_data__true)
     BOOST_REQUIRE(!ec);
 }
 
+#if defined(HAVE_LINUX)
+BOOST_AUTO_TEST_CASE(asio__half_closed__peer_reset__true)
+{
+    pair connection{};
+    BOOST_REQUIRE(connection.ok);
+
+    boost_code ec{};
+    connection.connected.set_option(boost::asio::socket_base::linger(true, 0), ec);
+    BOOST_REQUIRE(!ec);
+    connection.connected.close(ec);
+    BOOST_REQUIRE(!ec);
+
+    BOOST_REQUIRE(half_closed_within(connection.accepted, 1000));
+}
+#endif
+
 BOOST_AUTO_TEST_CASE(asio__half_closed__opened_unconnected__false)
 {
     asio::context service{};

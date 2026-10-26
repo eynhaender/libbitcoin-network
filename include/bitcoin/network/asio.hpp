@@ -59,7 +59,8 @@ namespace asio
     typedef tcp::socket socket;
     typedef std::shared_ptr<socket> socket_ptr;
 
-    /// True if the peer has closed its side of the connection (FIN received).
+    /// True if the peer has closed its side of the connection (FIN received),
+    /// or reset it (RST received, linux only).
     BCT_API bool half_closed(socket& sock) NOEXCEPT;
 
     /// asio::ssl::socket

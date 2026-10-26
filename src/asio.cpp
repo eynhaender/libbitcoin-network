@@ -70,7 +70,8 @@ bool half_closed(socket& sock) NOEXCEPT
     socklen_t size = sizeof(info);
     if (is_zero(::getsockopt(sock.native_handle(), IPPROTO_TCP, TCP_INFO,
         &info, &size)))
-        return info.tcpi_state == TCP_CLOSE_WAIT;
+        return info.tcpi_state == TCP_CLOSE_WAIT ||
+            (info.tcpi_state == TCP_CLOSE && !is_zero(info.tcpi_rcv_mss));
 #endif
     return false;
 }
